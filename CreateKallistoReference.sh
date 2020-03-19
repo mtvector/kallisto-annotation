@@ -57,19 +57,10 @@ head -1 cDNA_t2g.txt
 
 cat introns.correct_header.fa | awk '/^>/ {print $0}' | tr ":" " " | tr -d ">" | awk '{print $1}' > introns_transcripts.txt
 cat introns_transcripts.txt | awk '{print $0"."NR"-I"}' > introns_transcripts.to_capture.txt
-#awk 'NR==FNR{a[$1]=$2; b[$1]=$3;next} {$2=a[$1];$3=b[$1]} 1' tr2g.txt introns_transcripts.txt > introns_t2g.txt
-
-#awk '{print ">"$1"."NR"-I"" gene_id:"$2" gene_name:"$3}' introns_t2g.txt > introns_fasta_header.txt
-#awk -v var=1 'FNR==NR{a[NR]=$0;next}{ if ($0~/^>/) {print a[var], var++} else {print $0}}' introns_fasta_header.txt introns.fa > introns.correct_header.fa
 
 cat cDNA.correct_header.fa | awk '/^>/ {print $0}'| tr -d ">" | awk '{print $1}' > cDNA_transcripts.txt
 cat cDNA_transcripts.txt | awk '{print $0"."NR}' > cDNA_transcripts.to_capture.txt
 head -1 cDNA_transcripts.to_capture.txt
-
-#awk 'NR==FNR{a[$1]=$2; b[$1]=$3;next} {$2=a[$1];$3=b[$1]} 1' tr2g.txt cDNA_transcripts.txt > cDNA_t2g.txt
-#awk '{print ">"$1"."NR" gene_id:"$2" gene_name:"$3}' cDNA_t2g.txt > cDNA_fasta_header.txt
-#awk -v var=1 'FNR==NR{a[NR]=$0;next}{ if ($0~/^>/) {print a[var], var++} else {print $0}}' cDNA_fasta_header.txt $cDNA_fa > cDNA.correct_header.fa
-#head -1 cDNA.correct_header.fa
 
 cat cDNA.correct_header.fa introns.correct_header.fa > cDNA_introns.fa
 cat cDNA_t2g.txt introns_t2g.txt > cDNA_introns_t2g.txt

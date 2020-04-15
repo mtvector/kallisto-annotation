@@ -9,10 +9,9 @@
 
 source ~/.bashrc
 conda activate kallisto
-
-REFPATH=/wynton/group/ye/mtschmitz/refdata2/rhemac10/CAT022020/
-FA=rheMac10.aligned
-GTF=Rhesus
+REFPATH=/wynton/group/ye/mtschmitz/refdata2/hg38/gencodev33/
+FA=hg38
+GTF=gencode.v33.annotation
 
 echo "$PWD $REFPATH $FA $GTF"
-$PWD/CreateKallistoReference.sh $PWD $REFPATH $FA $GTF
+source $PWD/CreateKallistoReference.sh $PWD $REFPATH $FA $GTF

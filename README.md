@@ -8,10 +8,15 @@ In this script introns are defined as the complement of Exons and Intergenic spa
 CreateKallistoReference.sh is the main script to generate the kallisto reference. It requires the python scripts in this repo, which replace elements from the awk code on the kallisto tutorial, which didn't work on all gtfs. It also requires you make a new conda environment kallisto and install a number of packages before running the script:
 
 conda create -n kallisto
+
 conda activate kallisto
+
 conda install -c bioconda bustools
+
 conda install -c bioconda kallisto
+
 conda install -c bioconda pybedtools
+
 pip install pandas 
 
 CreateKallistoReferenceRhemac10.sh is an example SGE runner script for CreateKallistoReference.sh.

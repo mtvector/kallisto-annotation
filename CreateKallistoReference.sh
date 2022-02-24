@@ -5,6 +5,7 @@
 #conda install -c bioconda bustools
 #conda install -c bioconda kallisto
 #conda install -c bioconda pybedtools
+#conda install -c bioconda gffread 
 #pip install pandas 
 
 source ~/.bashrc
@@ -13,7 +14,7 @@ which python3
 #conda list
 #pip list
 export PATH="/wynton/home/ye/mschmitz1/utils/miniconda3/bin:$PATH"
-conda activate kallisto
+conda activate kallisto2
 which python3
 SCRIPTPATH=$1
 REFPATH=$2
@@ -45,11 +46,11 @@ bedtools complement -i <(cat exon_sorted.final.bed intergenic_sorted.bed | sort 
 cat ${GTF}.gtf | awk '$3 == "transcript" {print $0}' | sort -k1,1 -k4,4n -k5,5n > transcript_sorted.gtf
 
 python3 $SCRIPTPATH/GTF2BED.py transcript_sorted.gtf
-#Need bedtools for finding overlap for introns, conflict in kallisto env
+#Need bedtools for finding overlap for introns
 python3 $SCRIPTPATH/IntronTranscriptBedOverlap.py intron_sorted.bed transcript_sorted.bed
-#conda activate kallisto
 
-cat ${GTF}.gtf | ~/utils/t2g.py > tr2g.txt
+#Now created in GTF2BED.py
+#cat ${GTF}.gtf | ~/utils/t2g.py > tr2g.txt
 
 bedtools getfasta -name -fo introns.fa -fi ${FA}.fa -bed intron_named.bed
 head -2 introns.fa

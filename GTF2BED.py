@@ -90,15 +90,30 @@ def _get_value(value):
 
     return value
 
-
+common_name='Name'
+common_id='gene_id'
 gtf = dataframe(sys.argv[1])
 gtf = gtf.fillna('')
+print(gtf)
+print(list(gtf.columns))
+tgtf=gtf.loc[gtf['feature']=='transcript',:]
+tgtf.loc[:,['transcript_id',common_id]]
+tgtf.drop_duplicates(subset = ['transcript_id'], keep = 'first', inplace = True) 
+
+ggtf=gtf.loc[gtf['feature']=='gene',:]
+ggtf.drop_duplicates(subset = [common_id], keep = 'first', inplace = True) 
+gdict=dict(zip(ggtf[common_id],ggtf[common_name]))
+#ggtf.loc[:,[common_id,common_name]]
+tgtf[common_name]=list(tgtf[common_id].replace(gdict))
+tgtf.loc[:,['transcript_id',common_id,common_name]].to_csv(os.path.join(os.path.dirname(sys.argv[1]),'tr2g.txt'),header=False,index=False,sep='\t')
+
 print(gtf)
 #gtf=gtf.loc[gtf['feature']=='exon',:]
 column_subset=gtf.columns[8:]
 tid=list(gtf['transcript_id'])
-gtf.loc[:,column_subset] = '"' + gtf.loc[:,column_subset] + '"'
-gtf.loc[:,column_subset] = gtf.loc[:,column_subset] + ';'
+print(gtf.loc[:,column_subset])
+gtf.loc[:,column_subset] = '"' + gtf.loc[:,column_subset].astype(str) + '"'
+gtf.loc[:,column_subset] = gtf.loc[:,column_subset].astype(str) + ';'
 for header in column_subset:
     gtf[header] = header + ' ' + gtf[header]
 gtf=gtf.fillna('')

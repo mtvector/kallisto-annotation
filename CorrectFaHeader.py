@@ -98,6 +98,17 @@ def _get_value(value):
 
 
 GTF=dataframe(sys.argv[1])
+
+tgtf=GTF.loc[GTF['feature']=='transcript',:]
+tgtf.loc[:,['transcript_id','gene_id']]
+tgtf.drop_duplicates(subset = ['transcript_id'], keep = 'first', inplace = True) 
+
+ggtf=GTF.loc[GTF['feature']=='gene',:]
+ggtf.drop_duplicates(subset = ['gene_id'], keep = 'first', inplace = True) 
+gdict=dict(zip(ggtf['gene_id'],ggtf['gene_name']))
+#ggtf.loc[:,['gene_id','gene_name']]
+GTF['gene_name']=list(GTF['gene_id'].replace(gdict))
+
 GTFtrans=GTF.loc[GTF['feature'].isin(['transcript']),:]
 #GTFtrans.index=GTFtrans['transcript_id']
 GTFtrans.index=[re.sub('\.[0-9]+','',tid) for tid in GTFtrans['transcript_id']]

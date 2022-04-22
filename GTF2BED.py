@@ -6,6 +6,17 @@ import pandas as pd
 import re
 import csv
 
+common_name='gene_name'
+gene_id='gene_id'
+transcript_or_gene='gene'
+
+if len(sys.argv)>4:
+    common_name=sys.argv[4]#'Name'
+if len(sys.argv)>3:
+    gene_id=sys.argv[3]#'gene_id'
+if len(sys.argv)>2:
+    transcript_or_gene=sys.argv[2]#'transcript'
+
 GTF_HEADER  = ['seqname', 'source', 'feature', 'start', 'end', 'score',
                'strand', 'frame']
 R_SEMICOLON = re.compile(r'\s*;\s*')
@@ -90,22 +101,13 @@ def _get_value(value):
 
     return value
 
-common_name='Name'
-common_id='gene_id'
 gtf = dataframe(sys.argv[1])
 gtf = gtf.fillna('')
 print(gtf)
 print(list(gtf.columns))
 tgtf=gtf.loc[gtf['feature']=='transcript',:]
-tgtf.loc[:,['transcript_id',common_id]]
+tgtf.loc[:,['transcript_id',gene_id]]
 tgtf.drop_duplicates(subset = ['transcript_id'], keep = 'first', inplace = True) 
-
-ggtf=gtf.loc[gtf['feature']=='gene',:]
-ggtf.drop_duplicates(subset = [common_id], keep = 'first', inplace = True) 
-gdict=dict(zip(ggtf[common_id],ggtf[common_name]))
-#ggtf.loc[:,[common_id,common_name]]
-tgtf[common_name]=list(tgtf[common_id].replace(gdict))
-tgtf.loc[:,['transcript_id',common_id,common_name]].to_csv(os.path.join(os.path.dirname(sys.argv[1]),'tr2g.txt'),header=False,index=False,sep='\t')
 
 print(gtf)
 #gtf=gtf.loc[gtf['feature']=='exon',:]
@@ -124,3 +126,14 @@ bed=gtf.loc[:,['seqname','start','end','transcript_id','score','strand','source'
 bed['start']=bed['start'].astype(int)
 bed.loc[:,'start']=bed.loc[:,'start']-1
 bed.to_csv(re.sub('gtf','bed',sys.argv[1]), sep='\t', header=False, index=False, quoting=csv.QUOTE_NONE)
+
+print(gtf['feature'])
+print('boolean',gtf['feature']==transcript_or_gene)
+ggtf=gtf.loc[gtf['feature']==transcript_or_gene,:]
+ggtf.drop_duplicates(subset = [gene_id], keep = 'first', inplace = True) 
+print('ggtf',ggtf)
+gdict=dict(zip(ggtf[gene_id],ggtf[common_name]))
+#ggtf.loc[:,[gene_id,common_name]]
+tgtf[common_name]=list(tgtf[gene_id].replace(gdict))
+tgtf.loc[:,['transcript_id',gene_id,common_name]].to_csv(os.path.join(os.path.dirname(sys.argv[1]),'tr2g.txt'),header=False,index=False,sep='\t')
+

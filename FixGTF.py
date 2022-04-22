@@ -1,6 +1,7 @@
-####USAGE:
-####python CorrectFaHeader.py GTF.gtf Input.fa Input.CorrectedForKallisto.fa -I
-####Changes header and outputs proper tr2g.txt files for kallisto bus
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
 
 
 import os
@@ -10,7 +11,6 @@ import gzip
 import pandas as pd
 import re
 import csv
-
 
 GTF_HEADER  = ['seqname', 'source', 'feature', 'start', 'end', 'score',
                'strand', 'frame']
@@ -97,42 +97,58 @@ def _get_value(value):
     return value
 
 
-GTF=dataframe(sys.argv[1])
-gene_feature=sys.argv[4]
+# In[10]:
 
-tgtf=GTF.loc[GTF['feature']=='transcript',:]
-tgtf.loc[:,['transcript_id','gene_id']]
+
+common_name='Name'
+common_id='gene_id'
+transcript_or_gene='transcript'
+gtf = dataframe('/wynton/group/ye/mtschmitz/refdata2/rhemac10/CAT_chang/Rhesus.gtf')
+gtf = gtf.fillna('')
+print(gtf)
+print(list(gtf.columns))
+
+
+# In[12]:
+
+
+tgtf=gtf.loc[gtf['feature']=='transcript',:]
+tgtf.loc[:,['transcript_id',common_id]]
 tgtf.drop_duplicates(subset = ['transcript_id'], keep = 'first', inplace = True) 
 
-ggtf=GTF.loc[GTF['feature']==gene_feature,:]
-ggtf.drop_duplicates(subset = ['gene_id'], keep = 'first', inplace = True) 
-gdict=dict(zip(ggtf['gene_id'],ggtf['gene_name']))
-GTF['gene_name']=list(GTF['gene_id'].replace(gdict))
+ggtf=gtf.loc[gtf['feature']=='transcript',:]
+ggtf.drop_duplicates(subset = [common_id], keep = 'first', inplace = True) 
+gdict=dict(zip(ggtf[common_id],ggtf[common_name]))
+#ggtf.loc[:,[common_id,common_name]]
+tgtf[common_name]=list(tgtf[common_id].replace(gdict))
 
-GTFtrans=GTF.loc[GTF['feature'].isin(['transcript']),:]
-#GTFtrans.index=GTFtrans['transcript_id']
-GTFtrans.index=[re.sub('\.[0-9]+','',tid) for tid in GTFtrans['transcript_id']]
-GTFtrans = GTFtrans.fillna('')
-if len(sys.argv)>5:
-    appendix=sys.argv[5]
-else:
-    appendix=''
 
-counter = 0
-newt2g=[[],[],[]]
-with open(sys.argv[3],'w') as newfasta:
-    with open(sys.argv[2],'r') as fasta:
-        for line in fasta:
-            if line[0] == '>':
-                counter+=1
-                tid=re.split('\s|:|\|',re.sub('>|\n','',line))[0]
-                #To remove transcript version
-                tid=re.sub('\.[0-9]+','',tid)
-                newfasta.write('>'+tid+'.'+ str(counter)+ appendix+' gene_id:'+ GTFtrans.loc[tid,'gene_id']  + ' gene_name:' +GTFtrans.loc[tid,'gene_name'] +' '+ str(counter)+'\n')
-                newt2g[0].append(tid+'.'+ str(counter)+ appendix)
-                newt2g[1].append(GTFtrans.loc[tid,'gene_id'])
-                newt2g[2].append(GTFtrans.loc[tid,'gene_name'])
-            else:
-                newfasta.write(line)
+# In[16]:
 
-pd.DataFrame(newt2g).T.to_csv(os.path.join(os.path.dirname(sys.argv[2]),re.sub('\.fa','_t2g.txt',sys.argv[2])),sep='\t',header=False,index=False)
+
+tgtf[common_name]=list(tgtf[common_id].replace(gdict))
+
+
+# In[13]:
+
+
+gtf['feature'].unique()
+
+
+# In[14]:
+
+
+ggtf
+
+
+# In[15]:
+
+
+tgtf
+
+
+# In[ ]:
+
+
+
+

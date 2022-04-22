@@ -4,8 +4,8 @@
 #$ -cwd
 #$ -j y
 #$ -pe smp 1
-#$ -l mem_free=4G
-#$ -l h_rt=8:00:00
+#$ -l mem_free=300G
+#$ -l h_rt=39:00:00
 
 source ~/.bashrc
 conda activate kallisto2
